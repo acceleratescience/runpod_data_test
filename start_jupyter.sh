@@ -10,7 +10,7 @@ rm -rf /var/lib/apt/lists/*
 pip install --upgrade pip jupyterlab notebook
 
 # --- Start JupyterLab in /workspace/runpod_data_test/data ---
-cd /workspace/runpod_data_test/data
+cd /workspace/workshop
 nohup jupyter lab \
   --ip=0.0.0.0 \
   --port=8888 \
@@ -26,7 +26,7 @@ nohup jupyter lab \
   --ServerApp.allow_origin='*' \
   --ServerApp.allow_origin_pat='.*proxy\.runpod\.net' \
   --ServerApp.disable_check_xsrf=True \
-  --ServerApp.root_dir=/workspace/runpod_data_test/data \
+  --ServerApp.root_dir=/workspace/workshop \
   >/tmp/jupyter.log 2>&1 &
 
 echo "JupyterLab started on port 8888. Logs: /tmp/jupyter.log"
