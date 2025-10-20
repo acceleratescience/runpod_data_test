@@ -1,4 +1,15 @@
 #!/bin/bash
+set -e
+
+# --- Install dependencies ---
+apt-get update -y
+apt-get install -y --no-install-recommends ca-certificates python3-pip
+rm -rf /var/lib/apt/lists/*
+
+# --- Install JupyterLab ---
+pip install --upgrade pip jupyterlab notebook
+
+# --- Start JupyterLab ---
 nohup jupyter lab \
   --ip=0.0.0.0 \
   --port=8888 \
@@ -14,4 +25,7 @@ nohup jupyter lab \
   --ServerApp.allow_origin='*' \
   --ServerApp.allow_origin_pat='.*proxy\.runpod\.net' \
   --ServerApp.disable_check_xsrf=True \
-  --ServerApp.root_dir=/workspace >/tmp/jupyter.log 2>&1 &
+  --ServerApp.root_dir=/workspace \
+  >/tmp/jupyter.log 2>&1 &
+
+echo "JupyterLab started on port 8888. Logs: /tmp/jupyter.log"
