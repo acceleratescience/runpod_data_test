@@ -14,13 +14,9 @@ fi
 
 cd /workspace/workshop
 
-# Remove unneeded files
 rm -rf .github docs overrides .dockerignore .pre-commit-config.yaml mkdocs.yml
 echo "Removed extra files."
 
-# Install dependencies using uv
 pip install uv
 uv sync
-
-# Extras
 uv pip install torch torchvision
