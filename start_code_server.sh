@@ -9,6 +9,10 @@ rm -rf /var/lib/apt/lists/*
 # --- Install code-server ---
 curl -fsSL https://code-server.dev/install.sh | sh
 
+# --- Preinstall VS Code extensions ---
+/usr/bin/code-server --install-extension ms-python.python
+/usr/bin/code-server --install-extension ms-toolsai.jupyter
+
 # --- Start code-server in /workspace/runpod_data_test/data ---
 cd /workspace/runpod_data_test/data
 nohup /usr/bin/code-server \
