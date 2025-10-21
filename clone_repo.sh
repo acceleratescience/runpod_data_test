@@ -23,4 +23,4 @@ pip install uv
 uv sync
 
 # Extras
-pip install torch torchvision
+uv pip install torch torchvision
