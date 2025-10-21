@@ -1,8 +1,3 @@
-Container Image
-```
-docker.io/runpod/base:0.5.1-cpu
-```
-
 Container Start Command
 
 ```
