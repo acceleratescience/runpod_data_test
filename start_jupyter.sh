@@ -9,7 +9,7 @@ rm -rf /var/lib/apt/lists/*
 # --- Install JupyterLab ---
 pip install --upgrade pip jupyterlab notebook
 
-# --- Start JupyterLab in /workspace/runpod_data_test/data ---
+# --- Start JupyterLab in /workspace/workshop ---
 cd /workspace/workshop
 nohup jupyter lab \
   --ip=0.0.0.0 \

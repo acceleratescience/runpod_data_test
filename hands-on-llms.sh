@@ -19,4 +19,3 @@ echo "Removed extra files."
 
 pip install uv
 uv sync
-uv pip install torch torchvision

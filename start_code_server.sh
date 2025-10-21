@@ -21,8 +21,8 @@ cat <<'EOF' > ~/.local/share/code-server/User/settings.json
 }
 EOF
 
-# --- Start code-server in /workspace/runpod_data_test/data ---
-cd /workspace/runpod_data_test/data
+# --- Start code-server in /workspace/workshop ---
+cd /workspace/workshop
 nohup /usr/bin/code-server \
   --bind-addr 0.0.0.0:8080 \
   --auth none \
