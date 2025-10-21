@@ -8,7 +8,7 @@ rm -rf /var/lib/apt/lists/*
 if [ -d /workspace/workshop/.git ]; then
   echo "Repository already exists at /workspace/workshop — skipping clone."
 else
-  git clone https://github.com/acceleratescience/diffusion-models.git /workspace/workshop
+  git clone https://github.com/acceleratescience/hands-on-llms.git /workspace/workshop
   echo "Repository cloned to /workspace/workshop"
 fi
 
