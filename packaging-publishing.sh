@@ -2,7 +2,7 @@
 set -e
 
 apt-get update -y
-apt-get install -y --no-install-recommends git python3-pip ca-certificates
+apt-get install -y --no-install-recommends git python3-pip ca-certificates jq
 rm -rf /var/lib/apt/lists/*
 
 if [ -d /workspace/workshop/.git ]; then

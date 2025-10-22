@@ -1,27 +1,18 @@
 #!/bin/bash
 set -e
 
-### CONFIG
-SOURCE_OWNER="acceleratescience"
-SOURCE_REPO="hands-on-llms"
-BRANCH="main"
-###
-
-WORKDIR="/workspace/workshop"
-TOKEN_FILE="$WORKDIR/github_token.txt"
-
 apt-get update -y
 apt-get install -y --no-install-recommends git python3-pip ca-certificates jq
 rm -rf /var/lib/apt/lists/*
 
-if [ -d "$WORKDIR/.git" ]; then
-  echo "Repository already exists at $WORKDIR — skipping clone."
+if [ -d /workspace/workshop/.git ]; then
+  echo "Repository already exists at /workspace/workshop — skipping clone."
 else
-  git clone -b $BRANCH https://github.com/$SOURCE_OWNER/$SOURCE_REPO.git "$WORKDIR"
-  echo "Repository cloned to $WORKDIR"
+  git clone -b main https://github.com/acceleratescience/hands-on-llms.git /workspace/workshop
+  echo "Repository cloned to /workspace/workshop"
 fi
 
-cd "$WORKDIR"
+cd /workspace/workshop
 
 rm -rf .github docs overrides .devcontainer .dockerignore .pre-commit-config.yaml mkdocs.yml
 echo "Removed extra files."
