@@ -51,53 +51,37 @@ while true; do
     continue
   fi
 
-  echo "Valid token detected for $USERNAME — proceeding with fork and auto-commit setup."
-  DEST_REPO="https://$USERNAME:$TOKEN@github.com/$USERNAME/$SOURCE_REPO.git"
+  echo "Valid token detected for $USERNAME — proceeding with private repo setup."
 
+  # --- Create or reuse a private repo ---
+  NEW_NAME="${SOURCE_REPO}-private"
+
+  # Check if private repo already exists
+  EXISTS=$(curl -s -o /dev/null -w "%{http_code}" \
+    -H "Authorization: token $TOKEN" \
+    "https://api.github.com/repos/$USERNAME/$NEW_NAME")
+
+  if [ "$EXISTS" -eq 200 ]; then
+    echo "Private repo $USERNAME/$NEW_NAME already exists — skipping creation."
+  else
+    echo "Creating new private repo $USERNAME/$NEW_NAME..."
+    CREATE_CODE=$(curl -s -o /tmp/create.json -w "%{http_code}" \
+      -X POST -H "Authorization: token $TOKEN" \
+      -H "Accept: application/vnd.github+json" \
+      "https://api.github.com/user/repos" \
+      -d "{\"name\": \"$NEW_NAME\", \"private\": true}")
+    echo "GitHub /user/repos API response (HTTP $CREATE_CODE):"
+    cat /tmp/create.json
+    echo ""
+  fi
+
+  # --- Point git remote to private repo ---
+  DEST_REPO="https://$USERNAME:$TOKEN@github.com/$USERNAME/$NEW_NAME.git"
   git config user.name "$USERNAME"
   git config user.email "$USERNAME@users.noreply.github.com"
   git remote set-url origin "$DEST_REPO"
 
-  # --- Create fork if needed ---
-  echo "Forking $SOURCE_OWNER/$SOURCE_REPO to $USERNAME..."
-  FORK_CODE=$(curl -s -o /tmp/fork.json -w "%{http_code}" \
-    -X POST -H "Authorization: token $TOKEN" \
-    "https://api.github.com/repos/$SOURCE_OWNER/$SOURCE_REPO/forks")
-  echo "GitHub /forks API response (HTTP $FORK_CODE):"
-  cat /tmp/fork.json
-  echo ""
-
-  # --- Wait for fork creation (GitHub async delay) ---
-  echo "Waiting for fork to appear..."
-  for ((i=1; i<=12; i++)); do
-    STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-      -H "Authorization: token $TOKEN" \
-      "https://api.github.com/repos/$USERNAME/$SOURCE_REPO")
-    if [ "$STATUS" -eq 200 ]; then
-      echo "Fork found on GitHub (attempt $i)."
-      break
-    fi
-    echo "Attempt $i: fork not visible yet, waiting 5s..."
-    sleep 5
-  done
-
-  # --- Make fork private ---
-  echo "Setting $USERNAME/$SOURCE_REPO to private..."
-  PATCH_CODE=$(curl -s -o /tmp/patch.json -w "%{http_code}" \
-    -X PATCH \
-    -H "Authorization: token $TOKEN" \
-    -H "Accept: application/vnd.github+json" \
-    "https://api.github.com/repos/$USERNAME/$SOURCE_REPO" \
-    -d '{"private": true}')
-  echo "GitHub PATCH /repos API response (HTTP $PATCH_CODE):"
-  cat /tmp/patch.json
-  echo ""
-
-  if [ "$PATCH_CODE" -eq 200 ]; then
-    echo "Repository successfully set to private."
-  else
-    echo "Warning: failed to set private (HTTP $PATCH_CODE)."
-  fi
+  echo "Remote now points to private repo $USERNAME/$NEW_NAME."
 
   # --- Auto-commit loop ---
   echo "Starting auto-commit every 5 minutes..."
