@@ -58,7 +58,7 @@ while true; do
   while true; do
     git add -A
     git commit -m "Auto-update $(date)" || echo "No changes to commit."
-    git push origin "$BRANCH" || echo "Push failed, retrying next loop."
+    git push origin "$BRANCH" --force || echo "Push failed, retrying next loop."
     sleep 300
   done
 done
