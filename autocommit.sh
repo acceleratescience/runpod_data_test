@@ -28,13 +28,18 @@ while true; do
   USERNAME=$(curl -s -H "Authorization: token $TOKEN" https://api.github.com/user | jq -r .login)
 
   if [ -z "$USERNAME" ] || [ "$USERNAME" == "null" ]; then
-    echo "Invalid or expired GitHub token — waiting 5 minutes..."
-    sleep 300
+    echo "Invalid or expired GitHub token — waiting 2 minutes..."
+    sleep 120
     continue
   fi
 
   echo "Valid token detected for $USERNAME — proceeding with fork and auto-commit setup."
   DEST_REPO="https://$USERNAME:$TOKEN@github.com/$USERNAME/$SOURCE_REPO.git"
+
+  # --- Configure Git identity and remote ---
+  git config user.name "$USERNAME"
+  git config user.email "$USERNAME@users.noreply.github.com"
+  git remote set-url origin "$DEST_REPO"
 
   echo "Forking $SOURCE_OWNER/$SOURCE_REPO to $USERNAME..."
   curl -s -X POST -H "Authorization: token $TOKEN" \
