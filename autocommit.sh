@@ -26,8 +26,8 @@ echo "Monitoring for a GitHub token in $TOKEN_FILE..."
 
 while true; do
   if [ ! -s "$TOKEN_FILE" ]; then
-    echo "No token found yet — waiting 2 minutes..."
-    sleep 120
+    echo "No token found yet — waiting 1 minute..."
+    sleep 60
     continue
   fi
 
@@ -41,8 +41,8 @@ while true; do
 
   USERNAME=$(jq -r '.login' /tmp/user.json 2>/dev/null || echo "")
   if [ "$HTTP_CODE" != "200" ] || [ -z "$USERNAME" ] || [ "$USERNAME" == "null" ]; then
-    echo "Invalid or expired GitHub token (HTTP $HTTP_CODE) — waiting 2 minutes..."
-    sleep 120
+    echo "Invalid or expired GitHub token (HTTP $HTTP_CODE) — waiting 1 minute..."
+    sleep 60
     continue
   fi
 
@@ -89,12 +89,12 @@ while true; do
   git remote set-url origin "$DEST_REPO"
 
   echo "Remote now points to private autosave repo $USERNAME/$NEW_NAME."
-  echo "Starting auto-commit every 5 minutes..."
+  echo "Starting auto-commit every 1 minute..."
 
   while true; do
     git add -A
     git commit -m "Auto-update $(date)" || echo "No changes to commit."
     git push origin "$BRANCH" --force || echo "Push failed, retrying next loop."
-    sleep 300
+    sleep 60
   done
 done
