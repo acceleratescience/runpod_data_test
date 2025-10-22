@@ -15,12 +15,16 @@ echo "Detected repo: $SOURCE_OWNER/$SOURCE_REPO (branch: $BRANCH)"
 
 # --- GitHub auto-commit system ---
 touch "$TOKEN_FILE"
+if ! grep -qx "github_token.txt" .gitignore 2>/dev/null; then
+  echo "github_token.txt" >> .gitignore
+  echo "Added github_token.txt to .gitignore."
+fi
 echo "Monitoring for a GitHub token in $TOKEN_FILE..."
 
 while true; do
   if [ ! -s "$TOKEN_FILE" ]; then
-    echo "No token found yet — waiting 5 minutes..."
-    sleep 300
+    echo "No token found yet — waiting 2 minutes..."
+    sleep 120
     continue
   fi
 
