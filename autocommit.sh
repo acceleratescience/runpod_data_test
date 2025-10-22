@@ -6,14 +6,12 @@ TOKEN_FILE="$WORKDIR/github_token.txt"
 
 cd "$WORKDIR"
 
-# --- Auto-detect repo info ---
 SOURCE_REPO=$(basename -s .git "$(git config --get remote.origin.url)")
 SOURCE_OWNER=$(git config --get remote.origin.url | sed -E 's|.*github\.com[:/](.+)/.+\.git|\1|')
 BRANCH=$(git rev-parse --abbrev-ref HEAD)
 
 echo "Detected repo: $SOURCE_OWNER/$SOURCE_REPO (branch: $BRANCH)"
 
-# --- GitHub auto-commit system ---
 touch "$TOKEN_FILE"
 if ! grep -qx "github_token.txt" .gitignore 2>/dev/null; then
   [ -s .gitignore ] && sed -i -e '$a\' .gitignore
@@ -45,7 +43,6 @@ while true; do
   echo "Valid token detected for $USERNAME — proceeding with fork and auto-commit setup."
   DEST_REPO="https://$USERNAME:$TOKEN@github.com/$USERNAME/$SOURCE_REPO.git"
 
-  # --- Configure Git identity and remote ---
   git config user.name "$USERNAME"
   git config user.email "$USERNAME@users.noreply.github.com"
   git remote set-url origin "$DEST_REPO"
@@ -53,6 +50,13 @@ while true; do
   echo "Forking $SOURCE_OWNER/$SOURCE_REPO to $USERNAME..."
   curl -s -X POST -H "Authorization: token $TOKEN" \
     "https://api.github.com/repos/$SOURCE_OWNER/$SOURCE_REPO/forks" >/dev/null
+
+  echo "Setting $USERNAME/$SOURCE_REPO to private..."
+  curl -s -X PATCH \
+    -H "Authorization: token $TOKEN" \
+    -H "Accept: application/vnd.github+json" \
+    "https://api.github.com/repos/$USERNAME/$SOURCE_REPO" \
+    -d '{"private": true}' >/dev/null
 
   echo "Starting auto-commit every 5 minutes..."
   while true; do
