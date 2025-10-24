@@ -2,13 +2,13 @@
 set -e
 
 apt-get update -y
-apt-get install -y --no-install-recommends git python3-pip ca-certificates
+apt-get install -y --no-install-recommends git python3-pip ca-certificates jq
 rm -rf /var/lib/apt/lists/*
 
 if [ -d /workspace/workshop/.git ]; then
   echo "Repository already exists at /workspace/workshop — skipping clone."
 else
-  git clone https://github.com/acceleratescience/diffusion-models.git /workspace/workshop
+  git clone -b main https://github.com/acceleratescience/workshop-template.git /workspace/workshop
   echo "Repository cloned to /workspace/workshop"
 fi
 
